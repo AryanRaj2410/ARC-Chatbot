@@ -57,6 +57,8 @@ Then open your browser and go to:
 http://localhost:5000
 ```
 
+![ARC Chatbot](arc%20cb.png)
+
 ---
 
 ## 🧠 How It Works
