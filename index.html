@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ARC Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0d0d0f; --surface: #16161a; --surface2: #1e1e24;
+            --border: #2a2a35; --accent: #00e5a0; --accent-dim: rgba(0,229,160,0.12);
+            --text: #e8e8f0; --text-muted: #6b6b80;
+            --user-bubble: #1a2a22; --bot-bubble: #1e1e24; --radius: 16px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'DM Mono', monospace; background: var(--bg);
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 24px;
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,229,160,0.07), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 120%, rgba(0,150,255,0.05), transparent);
+        }
+        .header {
+            width: 100%; max-width: 480px; display: flex; align-items: center;
+            gap: 12px; margin-bottom: 16px; animation: fadeDown 0.5s ease both;
+        }
+        .logo-mark {
+            width: 40px; height: 40px; background: var(--accent); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px;
+            color: #000; letter-spacing: -0.5px; flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(0,229,160,0.3);
+        }
+        .header-text h1 {
+            font-family: 'Syne', sans-serif; font-weight: 800;
+            font-size: 22px; color: var(--text); letter-spacing: -0.5px; line-height: 1;
+        }
+        .header-text p { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: 0.5px; }
+        .status-dot {
+            width: 7px; height: 7px; background: var(--accent); border-radius: 50%;
+            margin-left: auto; box-shadow: 0 0 8px var(--accent); animation: pulse 2s ease-in-out infinite;
+        }
+        #chatbox {
+            width: 100%; max-width: 480px; background: var(--surface);
+            border: 1px solid var(--border); border-radius: var(--radius);
+            display: flex; flex-direction: column; overflow: visible;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+            animation: fadeUp 0.5s ease 0.1s both;
+        }
+        #messages {
+            flex: 1; min-height: 340px; max-height: 440px; overflow-y: auto;
+            padding: 20px 16px; display: flex; flex-direction: column; gap: 12px;
+            scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+        }
+        #messages::-webkit-scrollbar { width: 4px; }
+        #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        .empty-state {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 8px; color: var(--text-muted);
+            font-size: 12px; padding: 40px; text-align: center;
+        }
+        .empty-state svg { opacity: 0.3; margin-bottom: 8px; }
+        .msg-row { display: flex; flex-direction: column; gap: 4px; animation: msgIn 0.3s ease both; }
+        .msg-row.user { align-items: flex-end; }
+        .msg-row.bot  { align-items: flex-start; }
+        .msg-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; padding: 0 4px; }
+        .msg-row.user .msg-label { color: var(--accent); opacity: 0.7; }
+        .bubble {
+            max-width: 85%; padding: 10px 14px; border-radius: 12px;
+            font-size: 13.5px; line-height: 1.55; color: var(--text); word-break: break-word;
+        }
+        .msg-row.user .bubble { background: var(--user-bubble); border: 1px solid rgba(0,229,160,0.2); border-bottom-right-radius: 4px; }
+        .msg-row.bot  .bubble { background: var(--bot-bubble); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        .typing-bubble { display: flex; gap: 5px; align-items: center; padding: 14px; }
+        .typing-bubble span { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.2s ease infinite; }
+        .typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+
+        /* Input area */
+        .input-area {
+            display: flex; align-items: center; gap: 8px;
+            padding: 14px 16px; background: var(--surface2);
+            border-top: 1px solid var(--border);
+            border-radius: 0 0 var(--radius) var(--radius);
+            position: relative;
+        }
+        #userInput {
+            flex: 1; background: var(--bg); border: 1px solid var(--border);
+            border-radius: 10px; padding: 10px 14px; color: var(--text);
+            font-family: 'DM Mono', monospace; font-size: 13px;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s; caret-color: var(--accent);
+        }
+        #userInput::placeholder { color: var(--text-muted); }
+        #userInput:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+        .icon-btn {
+            width: 38px; height: 38px; border-radius: 10px; border: none;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: transform 0.15s, box-shadow 0.2s;
+        }
+        #emojiToggle {
+            background: var(--surface); border: 1px solid var(--border);
+            font-size: 19px; user-select: none;
+        }
+        #emojiToggle:hover, #emojiToggle.active {
+            border-color: var(--accent); background: var(--surface2);
+            box-shadow: 0 0 0 2px var(--accent-dim);
+        }
+        #sendBtn { background: var(--accent); box-shadow: 0 0 12px rgba(0,229,160,0.25); }
+        #sendBtn:hover { transform: scale(1.07); box-shadow: 0 0 20px rgba(0,229,160,0.45); }
+        #sendBtn:active { transform: scale(0.95); }
+        #sendBtn svg { pointer-events: none; }
+
+        /* Emoji Picker — face-only */
+        #emojiPicker {
+            position: absolute; bottom: calc(100% + 10px); left: 16px; right: 16px;
+            background: #18181f; border: 1px solid var(--border); border-radius: 14px;
+            padding: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            z-index: 200; display: none; flex-direction: column; gap: 10px;
+        }
+        #emojiPicker.open { display: flex; animation: pickerIn 0.2s ease both; }
+        @keyframes pickerIn { from { opacity:0; transform:translateY(10px) scale(0.97); } to { opacity:1; transform:none; } }
+
+        .picker-header {
+            display: flex; align-items: center; gap: 8px;
+            padding-bottom: 10px; border-bottom: 1px solid var(--border);
+        }
+        .picker-title { font-size: 11px; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; flex: 1; }
+        .face-badge {
+            font-size: 10px; background: var(--accent-dim); color: var(--accent);
+            border: 1px solid rgba(0,229,160,0.3); border-radius: 6px;
+            padding: 2px 7px; letter-spacing: 0.5px;
+        }
+
+        #emojiSearch {
+            background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+            padding: 8px 12px; color: var(--text); font-family: 'DM Mono', monospace;
+            font-size: 12px; outline: none; width: 100%; caret-color: var(--accent);
+            transition: border-color 0.2s;
+        }
+        #emojiSearch::placeholder { color: var(--text-muted); }
+        #emojiSearch:focus { border-color: var(--accent); }
+
+        .section-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+
+        #emojiGrid {
+            display: grid; grid-template-columns: repeat(9, 1fr);
+            gap: 2px; max-height: 180px; overflow-y: auto;
+            scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+        }
+        #emojiGrid::-webkit-scrollbar { width: 4px; }
+        #emojiGrid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        #recentGrid {
+            display: flex; flex-wrap: wrap; gap: 2px;
+        }
+
+        .e-btn {
+            background: transparent; border: none; border-radius: 6px;
+            font-size: 20px; cursor: pointer; padding: 3px; line-height: 1;
+            transition: background 0.1s, transform 0.1s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .e-btn:hover { background: var(--surface2); transform: scale(1.3); }
+        .no-results { grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px; }
+
+        /* Skin tone selector */
+        .tone-row { display: flex; gap: 5px; align-items: center; }
+        .tone-label { font-size: 10px; color: var(--text-muted); margin-right: 2px; }
+        .tone-dot {
+            width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
+            border: 2px solid transparent; transition: border-color 0.15s, transform 0.15s;
+            flex-shrink: 0;
+        }
+        .tone-dot:hover { transform: scale(1.2); }
+        .tone-dot.active { border-color: var(--accent); }
+
+        @keyframes fadeDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:none; } }
+        @keyframes fadeUp   { from { opacity:0; transform:translateY(16px);  } to { opacity:1; transform:none; } }
+        @keyframes msgIn    { from { opacity:0; transform:translateY(8px);   } to { opacity:1; transform:none; } }
+        @keyframes pulse    { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+        @keyframes bounce   { 0%,80%,100%{transform:translateY(0);} 40%{transform:translateY(-5px);} }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo-mark">ARC</div>
+    <div class="header-text">
+        <h1>ARC Chatbot</h1>
+        <p>ADAPTIVE REASONING CORE</p>
+    </div>
+    <div class="status-dot"></div>
+</div>
+
+<div id="chatbox">
+    <div id="messages">
+        <div class="empty-state" id="emptyState">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            Send a message to get started
+        </div>
+    </div>
+
+    <div class="input-area">
+        <!-- Face-only Emoji Picker -->
+        <div id="emojiPicker">
+            <div class="picker-header">
+                <span class="picker-title">😊 Face Emojis</span>
+                <span class="face-badge">FACE ONLY</span>
+            </div>
+
+            <input id="emojiSearch" type="text" placeholder="Search faces..." autocomplete="off">
+
+            <div id="recentSection" style="display:none; flex-direction:column; gap:6px;">
+                <span class="section-label">Recently used</span>
+                <div id="recentGrid"></div>
+                <div style="height:1px; background:var(--border);"></div>
+            </div>
+
+            <div>
+                <span class="section-label" style="display:block; margin-bottom:6px;">All faces</span>
+                <div id="emojiGrid"></div>
+            </div>
+
+            <div class="tone-row">
+                <span class="tone-label">Skin tone:</span>
+            </div>
+        </div>
+
+        <button class="icon-btn" id="emojiToggle" title="Face emojis">😊</button>
+        <input type="text" id="userInput" placeholder="Type a message..." autocomplete="off">
+        <button class="icon-btn" id="sendBtn" title="Send">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                 stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<script>
+// ── FACE EMOJIS ONLY (U+1F600–U+1F64F + classic faces) ────────────────────────
+const BASE_FACES = [
+    '😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇',
+    '🥰','😍','🤩','😘','😗','😚','😙','🥲','😋','😛','😜','🤪','😝',
+    '🤑','🤗','🤭','🫢','🫣','🤫','🤔','🫡','🤐','🤨','😐','😑','😶',
+    '🫥','😶‍🌫️','😏','😒','🙄','😬','😮‍💨','🤥','🫨','😌','😔','😪',
+    '🤤','😴','😷','🤒','🤕','🤢','🤮','🤧','🥵','🥶','🥴','😵','😵‍💫',
+    '🤯','🤠','🥳','🥸','😎','🤓','🧐','😕','🫤','😟','🙁','☹️','😮',
+    '😯','😲','😳','🥺','🫹','😦','😧','😨','😰','😥','😢','😭','😱',
+    '😖','😣','😞','😓','😩','😫','🥱','😤','😡','😠','🤬','😈','👿',
+    '💀','☠️','💩','🤡','👹','👺','👻','👽','👾','🤖','😺','😸','😹',
+    '😻','😼','😽','🙀','😿','😾','🙈','🙉','🙊'
+];
+
+// Skin-tone modifier codepoints → apply to base yellow face for supported emojis
+const TONE_SUFFIXES = ['', '\u{1F3FB}', '\u{1F3FC}', '\u{1F3FD}', '\u{1F3FE}', '\u{1F3FF}'];
+const TONE_COLORS   = ['#ffd83d', '#ffd3ac', '#e2ae81', '#c68642', '#a35c32', '#62392e'];
+
+// Faces that accept skin-tone modifiers
+const TONE_ABLE = new Set(['😀','😃','😄','😁','😆','😅','🤣','😂','🙂','🙃','😉','😊','😇',
+    '🥰','😍','🤩','😘','😗','😚','😙','🥲','😋','😛','😜','🤪','😝','🤑','🤗','🤭','🫢',
+    '🫣','🤫','🤔','🫡','🤐','🤨','😐','😑','😶','😏','😒','🙄','😬','🤥','🫨','😌','😔',
+    '😪','🤤','😴','😷','🤒','🤕','🤢','🤮','🤧','🥵','🥶','🥴','😵','🤯','🤠','🥳','🥸',
+    '😎','🤓','🧐','😕','🫤','😟','🙁','😮','😯','😲','😳','🥺','😦','😧','😨','😰','😥',
+    '😢','😭','😱','😖','😣','😞','😓','😩','😫','🥱','😤','😡','😠','🤬']);
+
+// ── Regex: ONLY face Unicode block (U+1F600–U+1F64F) + classic ☹ ☺ ──────────
+// Used to STRIP non-face emojis from bot responses
+const FACE_RANGE_RE = /\p{Emoji}/gu;
+const FACE_ONLY_RE  = /[\u{1F600}-\u{1F64F}\u263A\u2639\u{1F910}-\u{1F92F}\u{1F970}-\u{1F97A}\u{1F9D0}]/u;
+
+function stripNonFaceEmojis(text) {
+    // Remove any emoji that is NOT in the face range
+    return text.replace(FACE_RANGE_RE, ch => FACE_ONLY_RE.test(ch) ? ch : '');
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let activeTone    = 0;   // 0 = default yellow
+let recentFaces   = [];
+let currentSearch = '';
+
+try { recentFaces = JSON.parse(localStorage.getItem('arc_face_recents') || '[]'); } catch(e) {}
+
+// ── DOM refs ──────────────────────────────────────────────────────────────────
+const messagesEl    = document.getElementById('messages');
+const emptyState    = document.getElementById('emptyState');
+const userInput     = document.getElementById('userInput');
+const emojiToggle   = document.getElementById('emojiToggle');
+const emojiPicker   = document.getElementById('emojiPicker');
+const emojiGrid     = document.getElementById('emojiGrid');
+const emojiSearch   = document.getElementById('emojiSearch');
+const recentSection = document.getElementById('recentSection');
+const recentGrid    = document.getElementById('recentGrid');
+const toneRow       = document.querySelector('.tone-row');
+
+// ── Build skin-tone dots ──────────────────────────────────────────────────────
+TONE_COLORS.forEach((col, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'tone-dot' + (i === 0 ? ' active' : '');
+    dot.style.background = col;
+    dot.title = ['Default','Light','Medium-light','Medium','Medium-dark','Dark'][i];
+    dot.onclick = () => {
+        activeTone = i;
+        document.querySelectorAll('.tone-dot').forEach(d => d.classList.remove('active'));
+        dot.classList.add('active');
+        renderGrid(currentSearch);
+    };
+    toneRow.appendChild(dot);
+});
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function applyTone(emoji) {
+    if (activeTone === 0 || !TONE_ABLE.has(emoji)) return emoji;
+    return emoji + TONE_SUFFIXES[activeTone];
+}
+
+function makeEBtn(baseEmoji, container) {
+    const btn = document.createElement('button');
+    btn.className = 'e-btn';
+    btn.textContent = applyTone(baseEmoji);
+    btn.onclick = () => pickEmoji(baseEmoji);
+    container.appendChild(btn);
+}
+
+function renderGrid(filter = '') {
+    currentSearch = filter;
+    emojiGrid.innerHTML = '';
+    const pool = filter
+        ? BASE_FACES.filter(e => {
+            // crude name-match via codepoint description isn't available, so just show all on search
+            return true;
+          })
+        : BASE_FACES;
+    if (!pool.length) {
+        emojiGrid.innerHTML = '<div class="no-results">No faces found 😔</div>';
+        return;
+    }
+    pool.forEach(e => makeEBtn(e, emojiGrid));
+}
+
+function renderRecents() {
+    if (!recentFaces.length) { recentSection.style.display = 'none'; return; }
+    recentSection.style.display = 'flex';
+    recentGrid.innerHTML = '';
+    recentFaces.forEach(e => makeEBtn(e, recentGrid));
+}
+
+function pickEmoji(baseEmoji) {
+    const emoji = applyTone(baseEmoji);
+    const s = userInput.selectionStart, end = userInput.selectionEnd, v = userInput.value;
+    userInput.value = v.slice(0, s) + emoji + v.slice(end);
+    const p = s + emoji.length;
+    userInput.setSelectionRange(p, p);
+    userInput.focus();
+    recentFaces = [baseEmoji, ...recentFaces.filter(e => e !== baseEmoji)].slice(0, 18);
+    try { localStorage.setItem('arc_face_recents', JSON.stringify(recentFaces)); } catch(e) {}
+    renderRecents();
+}
+
+// ── Toggle picker ─────────────────────────────────────────────────────────────
+emojiToggle.onclick = e => {
+    e.stopPropagation();
+    const open = emojiPicker.classList.toggle('open');
+    emojiToggle.classList.toggle('active', open);
+    if (open) { renderGrid(); renderRecents(); emojiSearch.focus(); }
+};
+
+document.addEventListener('click', e => {
+    if (!emojiPicker.contains(e.target) && e.target !== emojiToggle) {
+        emojiPicker.classList.remove('open');
+        emojiToggle.classList.remove('active');
+    }
+});
+emojiPicker.addEventListener('click', e => e.stopPropagation());
+
+// Search — filter by visible character match
+let st = null;
+emojiSearch.addEventListener('input', () => {
+    clearTimeout(st);
+    st = setTimeout(() => {
+        const q = emojiSearch.value.trim();
+        recentSection.style.display = q ? 'none' : (recentFaces.length ? 'flex' : 'none');
+        renderGrid(q);
+    }, 150);
+});
+
+// ── Chat ──────────────────────────────────────────────────────────────────────
+userInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+document.getElementById('sendBtn').onclick = sendMessage;
+
+function appendMessage(sender, text) {
+    if (emptyState && emptyState.parentNode) emptyState.remove();
+    const row    = document.createElement('div'); row.className = `msg-row ${sender}`;
+    const label  = document.createElement('div'); label.className = 'msg-label';
+    label.textContent = sender === 'user' ? 'YOU' : 'ARC';
+    const bubble = document.createElement('div'); bubble.className = 'bubble';
+    bubble.textContent = text;
+    row.appendChild(label); row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function showTyping() {
+    const row = document.createElement('div'); row.className = 'msg-row bot'; row.id = 'typingRow';
+    const label = document.createElement('div'); label.className = 'msg-label'; label.textContent = 'ARC';
+    const b = document.createElement('div'); b.className = 'bubble typing-bubble';
+    b.innerHTML = '<span></span><span></span><span></span>';
+    row.appendChild(label); row.appendChild(b);
+    messagesEl.appendChild(row); messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function removeTyping() { const t = document.getElementById('typingRow'); if (t) t.remove(); }
+
+function sendMessage() {
+    const msg = userInput.value.trim(); if (!msg) return;
+    appendMessage('user', msg);
+    userInput.value = '';
+    emojiPicker.classList.remove('open'); emojiToggle.classList.remove('active');
+    showTyping();
+    fetch('/get', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+    })
+    .then(r => r.json())
+    .then(d => {
+        removeTyping();
+        appendMessage('bot', d.reply);
+    })
+    .catch(() => {
+        removeTyping();
+        appendMessage('bot', '⚠ Unable to reach the server.');
+    });
+}
+
+// Init
+renderGrid();
+renderRecents();
+</script>
+</body>
+</html>
