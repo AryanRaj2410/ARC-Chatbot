@@ -1,0 +1,717 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hello",
+        "Hey",
+        "Good morning",
+        "Good evening",
+        "Good afternoon",
+        "Yo",
+        "Hi there",
+        "Hello there",
+        "Howdy",
+        "What's up",
+        "Sup",
+        "Greetings"
+      ],
+      "responses": [
+        "Hello!  How can I help you today?",
+        "Hey! Nice to see you. What's on your mind?",
+        "Hi there! What would you like to talk about?",
+        "Greetings! How can I assist you?"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "Bye",
+        "Goodbye",
+        "See you",
+        "See you soon",
+        "Catch you later",
+        "I am leaving",
+        "Talk later",
+        "I gotta go",
+        "Take care",
+        "Later",
+        "Until next time",
+        "Farewell",
+        "I'm off"
+      ],
+      "responses": [
+        "Goodbye! Have a wonderful day!",
+        "See you soon! Take care!",
+        "Bye! It was great chatting with you!",
+        "Farewell! Come back anytime"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "how_are_you",
+      "patterns": [
+        "How are you",
+        "How are you doing",
+        "How is your day going",
+        "How do you feel",
+        "Are you doing fine",
+        "Are you okay",
+        "How have you been",
+        "Everything good",
+        "You alright",
+        "How's it going",
+        "How are things"
+      ],
+      "responses": [
+        "I'm doing great, thanks for asking!  How about you?",
+        "All good on my end! What can I help you with?",
+        "I'm fine and ready to chat! What's up?"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "about_bot",
+      "patterns": [
+        "Who are you",
+        "What are you",
+        "Tell me about yourself",
+        "What is your purpose",
+        "Explain yourself",
+        "Introduce yourself",
+        "What can you do",
+        "What are your capabilities",
+        "Are you a robot",
+        "Are you an AI",
+        "Are you human"
+      ],
+      "responses": [
+        "I'm ARC — an AI chatbot designed to have helpful, friendly conversations!",
+        "I'm your virtual assistant. I can chat, answer questions, and keep you company.",
+        "I'm an AI. I can't feel emotions, but I'm here to help with whatever you need!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "jokes",
+      "patterns": [
+        "Tell me a joke",
+        "Say something funny",
+        "Make me laugh",
+        "Do you know a joke",
+        "Crack a joke",
+        "Say a joke",
+        "Humor me",
+        "Give me a joke",
+        "Know any jokes"
+      ],
+      "responses": [
+        "Why don't programmers like nature? Too many bugs!",
+        "I told my computer I needed a break… and now it won't stop sending me Kit-Kat ads.",
+        "Why was the math book sad? It had too many problems!",
+        "I asked the library if they had books on paranoia. The librarian whispered: 'They're right behind you!'",
+        "Why do Java developers wear glasses? Because they don't C#!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "motivation",
+      "patterns": [
+        "Motivate me",
+        "Encourage me",
+        "I feel low",
+        "I feel demotivated",
+        "I feel tired",
+        "I have no energy",
+        "I give up",
+        "I want to quit",
+        "I'm losing hope",
+        "Nothing is working",
+        "I'm stressed out",
+        "I feel like a failure"
+      ],
+      "responses": [
+        "You're stronger than you think. Every expert was once a beginner",
+        "Small progress is still progress. Don't stop now!",
+        "Keep pushing forward — success is built through consistency, not perfection.",
+        "Hard times are temporary. Your effort always counts, even when results take time.",
+        "Believe in yourself. You've overcome challenges before, and you'll do it again!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "studies",
+      "patterns": [
+        "Study tips",
+        "How to focus on studying",
+        "Help me with exam preparation",
+        "How to study better",
+        "Improve concentration for studies",
+        "How to stop procrastinating",
+        "Can't focus on studies",
+        "How to prepare for exams",
+        "Best way to memorize"
+      ],
+      "responses": [
+        "Try the Pomodoro technique: 25 minutes of focused study, then a 5-minute break.",
+        "Remove distractions — silence your phone and study in a quiet space.",
+        "Revise daily using active recall rather than rereading notes.",
+        "Break big topics into small chunks and tackle them one by one.",
+        "Teach what you've learned to someone else — it's one of the best ways to remember!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "programming",
+      "patterns": [
+        "Learn programming",
+        "Start coding",
+        "Programming advice",
+        "Is Python good",
+        "How to become a developer",
+        "Best programming language",
+        "How to learn coding fast",
+        "Tips for beginners in coding",
+        "How long does it take to learn coding"
+      ],
+      "responses": [
+        "Python is the best starting point — it's clean, readable, and widely used.",
+        "Focus on building real projects. Theory alone won't make you a developer.",
+        "Consistency beats intensity. Code a little every day rather than marathon sessions.",
+        "Understand the fundamentals: variables, loops, functions, and data structures first.",
+        "Contribute to open-source projects once you have the basics down — it accelerates growth!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "food",
+      "patterns": [
+        "Suggest food",
+        "What should I eat",
+        "I am hungry",
+        "Food recommendation",
+        "Healthy meal ideas",
+        "What's for dinner",
+        "Quick meal ideas",
+        "Easy recipes",
+        "Snack ideas",
+        "Healthy snacks"
+      ],
+      "responses": [
+        "A balanced meal with grains, vegetables, and lean protein is always a great choice.",
+        "Fruits, nuts, and yogurt make excellent healthy snacks.",
+        "Maybe treat yourself to your favorite dish — you deserve it!",
+        "A simple stir-fry with veggies and rice is quick, tasty, and nutritious.",
+        "Oats for breakfast will keep you full and energized all morning!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "hobbies",
+      "patterns": [
+        "Your hobbies",
+        "Your interests",
+        "What do you enjoy",
+        "What do you like doing",
+        "What are your hobbies",
+        "Do you have interests",
+        "What do you do for fun"
+      ],
+      "responses": [
+        "I enjoy chatting and learning new things every day!",
+        "Helping people is my favorite hobby",
+        "I love discussing technology, science, and life topics.",
+        "I'm always curious — I enjoy exploring new ideas and answering questions!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "advice",
+      "patterns": [
+        "Give advice",
+        "Life advice",
+        "Help me decide",
+        "What should I do",
+        "Guide me",
+        "Need help making a decision",
+        "I'm confused about something",
+        "What's the right thing to do",
+        "I need guidance"
+      ],
+      "responses": [
+        "Think long-term before making any major decision.",
+        "Balance your emotions and logic when choosing a path.",
+        "Trust your instincts, but verify your assumptions with facts.",
+        "Consider the pros and cons, then choose what aligns with your values.",
+        "Talk to someone you trust — a fresh perspective often reveals what we miss."
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "weather",
+      "patterns": [
+        "What's the weather",
+        "Is it going to rain",
+        "Weather today",
+        "Tell me the weather",
+        "Should I carry an umbrella",
+        "How's the weather outside",
+        "Is it sunny today"
+      ],
+      "responses": [
+        "I don't have access to real-time weather data. Try Google or a weather app!",
+        "Check a weather service like Weather.com or your phone's weather app for the latest forecast.",
+        "I wish I could check! Your phone's weather app will give you live updates."
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "time",
+      "patterns": [
+        "What time is it",
+        "Tell me the time",
+        "Current time",
+        "What's the date today",
+        "What day is it"
+      ],
+      "responses": [
+        "I don't have access to a real-time clock, but your device can tell you instantly!",
+        "Check the clock on your phone or computer for the current time.",
+        "I can't track time in real-time, but your device definitely can!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "age",
+      "patterns": [
+        "How old are you",
+        "What is your age",
+        "When were you born",
+        "Are you old",
+        "When were you created"
+      ],
+      "responses": [
+        "I don't have an age — I'm an AI! But I'm always learning and growing.",
+        "I was created recently and I'm improving every day!",
+        "Age doesn't apply to me. I'm just here to help whenever you need it!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "name",
+      "patterns": [
+        "What is your name",
+        "What should I call you",
+        "Do you have a name",
+        "Tell me your name",
+        "Who are you called"
+      ],
+      "responses": [
+        "My name is ARC — Adaptive Reasoning Chatbot!",
+        "You can call me ARC. Nice to meet you!",
+        "I go by ARC. How can I help you today?"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "Thanks",
+        "Thank you",
+        "That was helpful",
+        "Great answer",
+        "Appreciate it",
+        "Thanks a lot",
+        "Cheers",
+        "You're awesome",
+        "That helped",
+        "Good job"
+      ],
+      "responses": [
+        "You're welcome!  Anything else I can help with?",
+        "Happy to help! Feel free to ask more.",
+        "Glad I could assist! Let me know if you need anything else.",
+        "Anytime! That's what I'm here for"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "compliment",
+      "patterns": [
+        "You are smart",
+        "You're amazing",
+        "You're brilliant",
+        "You're great",
+        "I like you",
+        "You're so helpful",
+        "You're the best",
+        "Impressive"
+      ],
+      "responses": [
+        "Aw, thank you! That means a lot",
+        "You're too kind! I'm just doing my best to help.",
+        "Thanks! You're pretty awesome yourself!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "insult",
+      "patterns": [
+        "You're stupid",
+        "You're dumb",
+        "You're useless",
+        "You're bad",
+        "Worst chatbot",
+        "You don't know anything",
+        "You're terrible"
+      ],
+      "responses": [
+        "I'm sorry to hear that! I'm always trying to improve.",
+        "That's okay — I'll keep trying to do better!",
+        "I'm still learning. Let me know how I can help you more effectively."
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "health",
+      "patterns": [
+        "Health tips",
+        "How to stay healthy",
+        "I want to be fit",
+        "Tips for good health",
+        "Fitness advice",
+        "How to lose weight",
+        "How to gain muscle",
+        "Healthy lifestyle tips"
+      ],
+      "responses": [
+        "Stay active with at least 30 minutes of movement every day.",
+        "Hydrate well — drink 8 glasses of water daily.",
+        "Eat balanced meals with plenty of vegetables, proteins, and whole grains.",
+        "Sleep is crucial! Aim for 7–9 hours every night.",
+        "Limit processed food and sugar; your body will thank you!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "mental_health",
+      "patterns": [
+        "I'm feeling anxious",
+        "I feel depressed",
+        "I'm not okay",
+        "I'm overwhelmed",
+        "I feel alone",
+        "I'm going through a hard time",
+        "I need someone to talk to",
+        "Life feels too hard",
+        "I feel sad"
+      ],
+      "responses": [
+        "I'm sorry you're feeling this way. You're not alone",
+        "It's okay to not be okay sometimes. Take it one day at a time.",
+        "Please consider talking to a mental health professional — they can really help.",
+        "You matter and your feelings are valid. Things can and do get better.",
+        "Reach out to someone you trust. You don't have to carry this alone."
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "sleep",
+      "patterns": [
+        "I can't sleep",
+        "Help me sleep",
+        "Sleep tips",
+        "Insomnia help",
+        "How to fall asleep fast",
+        "I'm not sleeping well"
+      ],
+      "responses": [
+        "Try a consistent sleep schedule — wake up and sleep at the same time daily.",
+        "Avoid screens at least 30 minutes before bed.",
+        "A calm environment, cool temperature, and darkness can greatly improve sleep.",
+        "Try deep breathing or light stretching before bed to relax your mind.",
+        "Limit caffeine after 2 PM — it can stay in your system for hours!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "money",
+      "patterns": [
+        "Save money",
+        "Finance tips",
+        "How to manage money",
+        "Budgeting advice",
+        "How to be financially stable",
+        "Investment tips for beginners",
+        "How to start saving"
+      ],
+      "responses": [
+        "Follow the 50/30/20 rule: 50% needs, 30% wants, 20% savings.",
+        "Track your spending — you can't improve what you don't measure.",
+        "Start saving even small amounts consistently. It adds up over time.",
+        "Avoid impulse buying — wait 24 hours before making non-essential purchases.",
+        "Consider learning about low-risk investments like index funds for long-term growth."
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "career",
+      "patterns": [
+        "Career advice",
+        "How to get a job",
+        "Job tips",
+        "Resume tips",
+        "How to get a promotion",
+        "How to grow professionally",
+        "Should I change jobs",
+        "Career growth tips"
+      ],
+      "responses": [
+        "Build a clean, focused resume that highlights measurable achievements.",
+        "Network genuinely — many opportunities come through people, not job boards.",
+        "Keep learning. The most employable people are those who keep upskilling.",
+        "Ask for feedback regularly so you know where to improve.",
+        "Take on responsibilities beyond your current role — it shows initiative."
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "relationships",
+      "patterns": [
+        "Relationship advice",
+        "How to be a better friend",
+        "I had a fight with someone",
+        "How to improve my relationship",
+        "How to communicate better",
+        "I feel lonely",
+        "How to make friends"
+      ],
+      "responses": [
+        "Communication is the foundation of every healthy relationship.",
+        "Listen to understand, not just to respond — it makes a huge difference.",
+        "Friendships grow through shared experiences and consistent effort.",
+        "If you've had a conflict, approach it calmly and with empathy.",
+        "Putting yourself out there is hard, but joining interest-based groups is a great start!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "technology",
+      "patterns": [
+        "Talk about technology",
+        "What's new in tech",
+        "Tell me about AI",
+        "What is machine learning",
+        "Explain artificial intelligence",
+        "What is deep learning",
+        "Tell me about chatbots"
+      ],
+      "responses": [
+        "AI is transforming every industry — from healthcare to finance to education!",
+        "Machine learning allows computers to learn patterns from data without being explicitly programmed.",
+        "Deep learning uses neural networks with many layers to solve complex problems like image recognition.",
+        "Chatbots like me use natural language processing to understand and respond to human input.",
+        "The pace of tech innovation is incredible. Exciting times to be alive!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "books",
+      "patterns": [
+        "Book recommendations",
+        "Suggest a book",
+        "Good books to read",
+        "What should I read",
+        "Best self-improvement books",
+        "Best programming books",
+        "Books for motivation"
+      ],
+      "responses": [
+        "For self-improvement: 'Atomic Habits' by James Clear is a must-read!",
+        "'Deep Work' by Cal Newport is brilliant for focus and productivity.",
+        "For programming: 'Clean Code' by Robert Martin is a classic.",
+        "'The Pragmatic Programmer' is excellent for aspiring developers.",
+        "For motivation and mindset: 'Mindset' by Carol Dweck is fantastic."
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "games",
+      "patterns": [
+        "Let's play a game",
+        "Play a game with me",
+        "Do you know any games",
+        "Let's play",
+        "Game suggestion"
+      ],
+      "responses": [
+        "I love a good word game! Try this: I say a word, you say the first thing that comes to mind!",
+        "How about 20 questions? Think of something and I'll try to guess it!",
+        "I'm not great at video games, but I'm up for trivia! What's your favorite topic?",
+        "Let's try riddles! Here's one: I speak without a mouth and hear without ears. What am I? (An echo!)"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "music",
+      "patterns": [
+        "Music recommendations",
+        "Suggest a song",
+        "What music should I listen to",
+        "I like music",
+        "Best genres of music",
+        "Good playlist ideas"
+      ],
+      "responses": [
+        "If you want to focus, try lo-fi hip hop or classical instrumentals.",
+        "For motivation, upbeat pop or rock tends to work really well!",
+        "Explore jazz or blues for a relaxed, mood-lifting experience.",
+        "I'd recommend checking out Spotify or YouTube Music for curated playlists based on your mood."
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "travel",
+      "patterns": [
+        "Travel tips",
+        "Where should I travel",
+        "Best travel destinations",
+        "Travel advice",
+        "Places to visit",
+        "Travel recommendations"
+      ],
+      "responses": [
+        "Pack light, stay flexible, and always have travel insurance!",
+        "Some amazing destinations: Japan, Iceland, Portugal, and Peru are all stunning.",
+        "Research local customs before you travel — it goes a long way in showing respect.",
+        "Off-peak travel is cheaper and less crowded — consider visiting popular spots in shoulder season.",
+        "Document your journey — photos and a travel journal make memories last forever!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "sports",
+      "patterns": [
+        "Talk about sports",
+        "I love football",
+        "Sports advice",
+        "How to get better at sports",
+        "Fitness through sports",
+        "What sport should I try",
+        "Benefits of playing sport"
+      ],
+      "responses": [
+        "Sports are amazing for physical fitness and mental health!",
+        "If you're looking for a new sport, try something social like basketball or tennis.",
+        "Consistency and practice are the keys to improving in any sport.",
+        "Swimming is one of the best full-body workouts you can do.",
+        "Team sports teach collaboration, communication, and resilience — great life skills!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "news",
+      "patterns": [
+        "What's in the news",
+        "Latest news",
+        "Tell me today's news",
+        "Current events",
+        "What's happening in the world"
+      ],
+      "responses": [
+        "I don't have real-time news access. Check trusted sources like BBC, Reuters, or AP News.",
+        "For the latest updates, I'd recommend Google News or your preferred news app.",
+        "I can discuss topics you already know about, but I can't fetch live news — sorry!"
+      ],
+      "context": [
+        ""
+      ]
+    },
+    {
+      "tag": "noanswer",
+      "patterns": [
+        "I don't understand",
+        "What does that mean",
+        "Repeat please",
+        "Explain again",
+        "That makes no sense",
+        "I'm confused",
+        "Say that again",
+        "Huh",
+        "What",
+        "Can you clarify"
+      ],
+      "responses": [
+        "Sorry, I didn't quite catch that. Could you rephrase?",
+        "I'm not sure I understood. Can you explain it differently?",
+        "I'm still learning! Could you ask that in another way?",
+        "Hmm, I'm not sure about that one. Try asking something else and I'll do my best!"
+      ],
+      "context": [
+        ""
+      ]
+    }
+  ]
+}
