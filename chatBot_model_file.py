@@ -1,95 +1,117 @@
-import nltk
-from nltk.stem import WordNetLemmatizer
-lemmatizer = WordNetLemmatizer()
+"""
+ARC Chatbot — Training Script
+Run this locally:  python train.py
+Requirements:      pip install tensorflow nltk numpy
+"""
+
+import random
 import json
 import pickle
-import tensorflow
 
+import nltk
+from nltk.stem import WordNetLemmatizer
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout , Activation, Flatten , Conv2D, MaxPooling2D
+from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import SGD
-import random
+from tensorflow.keras.callbacks import EarlyStopping
 
-words=[]
+# ── NLTK setup ─────────────────────────────────────────────────────────────────
+for pkg in ['punkt', 'punkt_tab', 'wordnet', 'omw-1.4']:
+    nltk.download(pkg, quiet=True)
+
+lemmatizer  = WordNetLemmatizer()
+IGNORE      = set(['?', '!', '.', ',', ';', ':', "'s"])
+
+# ── Load intents ───────────────────────────────────────────────────────────────
+with open('intents.json') as f:
+    intents = json.load(f)
+
+words  = []
 labels = []
-docs = []
-ignore_list = ['?', '!']
-
-dataset = open('intents.json').read()
-intents = json.loads(dataset)
-
+docs   = []
 
 for intent in intents['intents']:
+    tag = intent['tag']
+    if tag not in labels:
+        labels.append(tag)
     for pattern in intent['patterns']:
+        tokens = nltk.word_tokenize(pattern)
+        words.extend(tokens)
+        docs.append((tokens, tag))
 
-        #tokenize each word
-        word_token = nltk.word_tokenize(pattern)
-        words.extend(word_token)
-        #add documents in the corpus
-        docs.append((word_token, intent['tag']))
+words  = sorted(set(
+    lemmatizer.lemmatize(w.lower())
+    for w in words
+    if w not in IGNORE
+))
+labels = sorted(labels)
 
-        # add to our labels list
-        if intent['tag'] not in labels:
-            labels.append(intent['tag'])
+print(f"✅ Vocabulary size : {len(words)} words")
+print(f"✅ Intent classes  : {len(labels)} tags")
+print(f"✅ Training samples: {len(docs)} patterns\n")
 
-# lemmatize each word, and sort words by removing duplicates:
-words = [lemmatizer.lemmatize(word.lower()) for word in words if word not in ignore_list]
-words = sorted(list(set(words)))
-# sort labels:
-labels = sorted(list(set(labels)))
+pickle.dump(words,  open('words.pkl',  'wb'))
+pickle.dump(labels, open('labels.pkl', 'wb'))
 
+# ── Build bag-of-words training data ──────────────────────────────────────────
+training = []
+zero_out = [0] * len(labels)
 
-pickle.dump(words,open('words.pkl','wb'))
-pickle.dump(labels,open('labels.pkl','wb'))
+for pattern_words, tag in docs:
+    lemmatized = [lemmatizer.lemmatize(w.lower()) for w in pattern_words]
+    bag        = [1 if w in lemmatized else 0 for w in words]
+    output     = list(zero_out)
+    output[labels.index(tag)] = 1
+    training.append([bag, output])
 
-# creating our training data:
-training_data = []
-# creating an empty array for our output (with size same as length of labels):
-output = [0]*len(labels)
+random.shuffle(training)
+training = np.array(training, dtype=object)
 
-for doc in docs:
-    bag_of_words = []
-    pattern_words = doc[0]
-    #lemmatize pattern words:
-    pattern_words = [lemmatizer.lemmatize(word.lower()) for word in pattern_words]
-    
-    for w in words:
-        if w in pattern_words:
-            bag_of_words.append(1)
-        else:
-            bag_of_words.append(0)
-            
-    output_row = list(output)
-    output_row[labels.index(doc[1])] = 1
-    
-    training_data.append([bag_of_words,output_row])
+x_train = np.array(list(training[:, 0]), dtype=np.float32)
+y_train = np.array(list(training[:, 1]), dtype=np.float32)
 
-# convert training_data to numpy array and shuffle the data:
-random.shuffle(training_data)
-training_data = np.array(training_data)
-
-
-# Now we have to create training list:
-x_train = list(training_data[:,0])
-y_train = list(training_data[:,1])
-
-# Creating Model:
-
-model = Sequential()
-model.add(Dense(128, input_shape=(len(x_train[0]),), activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(64, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(len(y_train[0]), activation='softmax'))
+# ── Build model ────────────────────────────────────────────────────────────────
+model = Sequential([
+    Dense(256, input_shape=(x_train.shape[1],), activation='relu'),
+    Dropout(0.5),
+    Dense(128, activation='relu'),
+    Dropout(0.4),
+    Dense(64,  activation='relu'),
+    Dropout(0.3),
+    Dense(y_train.shape[1], activation='softmax'),
+])
 
 model.summary()
 
-sgd_optimizer = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-model.compile(loss='categorical_crossentropy', optimizer=sgd_optimizer, metrics=['accuracy'])
+sgd = SGD(learning_rate=0.01, momentum=0.9, nesterov=True)
+model.compile(
+    loss='categorical_crossentropy',
+    optimizer=sgd,
+    metrics=['accuracy']
+)
 
-# fit the model 
-history = model.fit(np.array(x_train), np.array(y_train), epochs=200, batch_size=5, verbose=1)
+# ── Early stopping to avoid overfitting ───────────────────────────────────────
+early_stop = EarlyStopping(
+    monitor='accuracy',
+    patience=20,
+    restore_best_weights=True,
+    verbose=1
+)
 
-model.save('chatbot_Application_model.h5', history)
+# ── Train ──────────────────────────────────────────────────────────────────────
+print("\n🚀 Starting training...\n")
+history = model.fit(
+    x_train, y_train,
+    epochs=500,
+    batch_size=8,
+    callbacks=[early_stop],
+    verbose=1
+)
 
+# ── Save ───────────────────────────────────────────────────────────────────────
+model.save('chatbot_Application_model.h5')
+print("\n✅ Model saved  →  chatbot_Application_model.h5")
+print("✅ Vocab saved  →  words.pkl")
+print("✅ Labels saved →  labels.pkl")
+print("\nAll done! You can now run your chatbot app.")
