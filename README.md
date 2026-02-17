@@ -7,7 +7,7 @@ A conversational AI chatbot built with Python, Flask, and TensorFlow using Natur
 ## 📁 Project Structure
 
 ```
-Source Code/
+ARC Chatbot/
 │
 ├── templates/
 │   └── index.html                  # Frontend chat interface (HTML/CSS/JS)
